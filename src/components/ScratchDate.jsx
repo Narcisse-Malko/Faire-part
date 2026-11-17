@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { DATE_LABEL } from '../config'
 
-const THRESHOLD = 0.55 // part de surface grattée avant révélation complète
+const THRESHOLD = 0.45 // part de surface grattée avant révélation complète
 const BRUSH = 34
 
 // Couche dorée à gratter, ornée d'une trame de triangles
@@ -163,13 +163,20 @@ export default function ScratchDate() {
   return (
     <div className="relative mx-auto w-full max-w-sm">
       <div className="rounded-[6px] bg-gradient-to-br from-gold-light via-gold to-gold-dark p-[1.5px] shadow-[0_20px_40px_-20px_rgba(110,80,30,.5)]">
-        <div ref={wrapRef} className="relative aspect-[5/3] overflow-hidden rounded-[5px] bg-ivory">
+        <div ref={wrapRef} className="relative aspect-[5/3.5] overflow-hidden rounded-[5px] bg-ivory">
           {/* date cachée */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="absolute inset-3 rounded-[3px] border border-gold/40" />
             <p className="font-display text-[0.65rem] tracking-[0.35em] text-gold uppercase">Le grand jour</p>
-            <p className="mt-2 font-display text-[2.1rem] tracking-[0.08em] text-gold-foil">{DATE_LABEL.short}</p>
+            <p className="mt-1 font-display text-[2.1rem] tracking-[0.08em] text-gold-foil">{DATE_LABEL.short}</p>
             <p className="mt-1 font-serif text-xl italic text-ink-soft">{DATE_LABEL.long}</p>
+            <div className="mt-3 flex items-center gap-2 text-gold-dark">
+              <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+                <path d="M12 21 c-4 -5 -7 -8.5 -7 -12 a7 7 0 0 1 14 0 c0 3.5 -3 7 -7 12 Z" />
+                <circle cx="12" cy="9" r="2.4" />
+              </svg>
+              <p className="font-display text-[0.72rem] tracking-[0.14em] uppercase">{DATE_LABEL.place}</p>
+            </div>
           </div>
 
           <canvas
