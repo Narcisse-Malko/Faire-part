@@ -164,9 +164,9 @@ export default function FloralArch() {
           de leurs familles
         </p>
         <h1 className="font-script text-gold-foil" style={{ marginTop: '4.5cqw', lineHeight: 1.05 }}>
-          <span className="block" style={{ fontSize: '12cqw' }}>{COUPLE.groom}</span>
+          <span className="block" style={{ fontSize: '10cqw' }}>{COUPLE.groom}</span>
           <span className="block text-gold" style={{ fontSize: '7cqw', lineHeight: 0.8 }}>&amp;</span>
-          <span className="block whitespace-nowrap" style={{ fontSize: '12.5cqw' }}>{COUPLE.bride}</span>
+          <span className="block whitespace-nowrap" style={{ fontSize: '10cqw' }}>{COUPLE.bride}</span>
         </h1>
         <p className="font-serif italic leading-snug text-ink-soft" style={{ fontSize: '4.6cqw', marginTop: '4.5cqw' }}>
           ont la joie de vous annoncer
