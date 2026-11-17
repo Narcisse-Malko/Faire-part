@@ -171,7 +171,7 @@ export default function FloralArch() {
         <p className="font-serif italic leading-snug text-ink-soft" style={{ fontSize: '4.6cqw', marginTop: '4.5cqw' }}>
           ont la joie de vous annoncer
           <br />
-          leur mariage
+          leur union civile
         </p>
       </div>
     </div>
