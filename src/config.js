@@ -26,9 +26,6 @@ export const PROGRAM = [
 ]
 
 // Musique d'ambiance.
-// Laisser `null` pour utiliser la mélodie douce générée par le navigateur.
-// Pour utiliser votre propre morceau : placez le fichier dans src/assets/
-// puis remplacez par exemple par :
-//   import musique from './assets/musique.mp3'
-//   export const MUSIC_SRC = musique
-export const MUSIC_SRC = null
+import musique from './assets/musique.mp3.mpeg'
+export const MUSIC_SRC = musique
+
