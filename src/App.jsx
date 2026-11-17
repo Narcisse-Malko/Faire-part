@@ -5,6 +5,7 @@ import ScratchDate from './components/ScratchDate'
 import Timeline from './components/Timeline'
 import Countdown from './components/Countdown'
 import AudioPlayer from './components/AudioPlayer'
+import Rsvp from './components/Rsvp'
 import WaxSeal from './components/WaxSeal'
 import { TataFrieze, TataDivider, ChevronBand } from './components/Tata'
 import { useReveal } from './lib/useReveal'
@@ -71,9 +72,16 @@ export default function App() {
           <Countdown />
         </Section>
 
+        <TataDivider className="mx-auto max-w-xs" />
+
+        {/* 5. Confirmation de présence */}
+        <Section kicker="Répondez s'il vous plaît" title="Serez-vous là ?">
+          <Rsvp />
+        </Section>
+
         <footer className="relative pt-4 text-center">
           <WaxSeal className="mx-auto w-20 drop-shadow-[0_4px_6px_rgba(90,60,15,.35)]" />
-          <p className="mt-5 font-serif text-xl italic text-ink-soft">Nous avons hâte de partager ce moment avec vous</p>
+          <p className="mt-5 px-6 font-serif text-lg italic text-ink-soft text-balance">Nous avons hâte de partager ce moment avec vous</p>
           <p className="mt-2 font-script text-4xl text-gold-foil">
             {COUPLE.groom} &amp; {COUPLE.bride}
           </p>
