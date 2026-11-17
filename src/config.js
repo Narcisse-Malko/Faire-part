@@ -10,6 +10,7 @@ export const COUPLE = {
 export const DATE_LABEL = {
   short: '08 · 02 · 2027',
   long: 'Lundi 8 février 2027',
+  place: "Arrondissement d'Agblangandan",
 }
 
 // Cible du compte à rebours (heure d'accueil des invités, UTC+1)
