@@ -120,7 +120,7 @@ export default function FloralArch() {
   }, [])
 
   return (
-    <div className="relative mx-auto aspect-[360/470] w-full max-w-[420px]">
+    <div className="relative mx-auto aspect-[360/470] w-full max-w-[420px]" style={{ containerType: 'inline-size' }}>
       <svg viewBox="0 0 360 470" className="absolute inset-0 h-full w-full" aria-hidden="true">
         <defs>
           <linearGradient id="arch-fill" x1="0" y1="0" x2="0" y2="1">
@@ -149,18 +149,26 @@ export default function FloralArch() {
         <path d="M70 460 l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4 l6 -4 l6 4" fill="none" stroke="#b8913a" strokeWidth=".8" strokeOpacity=".7" />
       </svg>
 
-      <div className="absolute inset-x-[15%] top-[31%] bottom-[20%] flex flex-col items-center justify-center text-center">
-        <p className="font-display text-[0.62rem] leading-relaxed tracking-[0.3em] text-gold uppercase">
+      {/*
+        Les tailles sont exprimées en cqw (pourcentage de la largeur de l'arche) :
+        le texte grandit et rétrécit avec le dessin, il ne peut donc jamais
+        déborder sur les fleurs ni se chevaucher, quel que soit l'écran.
+      */}
+      <div className="absolute inset-x-[15%] top-[29%] bottom-[19%] flex flex-col items-center justify-center text-center">
+        <p
+          className="font-display leading-relaxed text-gold uppercase"
+          style={{ fontSize: '2.7cqw', letterSpacing: '0.28em' }}
+        >
           Avec la bénédiction
           <br />
           de leurs familles
         </p>
-        <h1 className="mt-3 font-script leading-[0.95] text-gold-foil">
-          <span className="block text-[2.9rem]">{COUPLE.groom}</span>
-          <span className="block text-3xl text-gold">&amp;</span>
-          <span className="block text-[2.9rem] whitespace-nowrap">{COUPLE.bride}</span>
+        <h1 className="font-script text-gold-foil" style={{ marginTop: '4.5cqw', lineHeight: 1.05 }}>
+          <span className="block" style={{ fontSize: '12.5cqw' }}>{COUPLE.groom}</span>
+          <span className="block text-gold" style={{ fontSize: '8cqw', lineHeight: 0.9 }}>&amp;</span>
+          <span className="block whitespace-nowrap" style={{ fontSize: '12.5cqw' }}>{COUPLE.bride}</span>
         </h1>
-        <p className="mt-5 font-serif text-[1.05rem] italic leading-snug text-ink-soft">
+        <p className="font-serif italic leading-snug text-ink-soft" style={{ fontSize: '4.6cqw', marginTop: '4.5cqw' }}>
           ont la joie de vous annoncer
           <br />
           leur mariage
