@@ -8,7 +8,7 @@ import { COUPLE } from '../config'
  * 0 attente · 1 le sceau se détache · 2 le rabat s'ouvre
  * 3 la carte sort de l'enveloppe · 4 l'écran d'accueil s'efface
  */
-const TIMINGS = [0, 550, 1400, 2700, 3500]
+const TIMINGS = [0, 650, 1650, 8000, 8800]
 
 export default function Envelope({ onOpened }) {
   const [stage, setStage] = useState(0)
