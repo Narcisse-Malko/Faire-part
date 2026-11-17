@@ -77,11 +77,11 @@ export default function Envelope({ onOpened }) {
           style={{ transform: stage >= 3 ? 'translateY(-58%)' : 'translateY(0)' }}
         >
           <div className="absolute inset-2 rounded-[2px] border border-gold/40" />
-          <p className="font-display text-[0.55rem] tracking-[0.3em] text-gold uppercase">Save the date</p>
+          <p className="font-display text-[0.55rem] tracking-[0.3em] text-gold uppercase">Une nouvelle page de notre histoire s'annonce et nous tenons à ce que vous en fassiez partie.</p>
           <p className="mt-1 font-script text-3xl text-gold-dark">
             {COUPLE.initials[0]} &amp; {COUPLE.initials[1]}
           </p>
-          <p className="mt-1 font-display text-[0.6rem] tracking-[0.25em] text-ink-soft">08 . 02 . 2027</p>
+          <p className="mt-1 font-display text-[0.6rem] tracking-[0.25em] text-ink-soft">C'est pour bientôt</p>
         </div>
 
         {/* poche avant */}
