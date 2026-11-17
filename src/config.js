@@ -1,5 +1,3 @@
-// Toutes les informations modifiables du faire-part sont regroupées ici.
-
 import musique from './assets/musique.mp3.mpeg?url'
 
 export const COUPLE = {
@@ -23,7 +21,7 @@ export const PROGRAM = [
   { time: '14h30', title: 'Accueil des invités', icon: 'welcome' },
   { time: '15h00', title: 'Cérémonie civile', icon: 'rings' },
   { time: '15h45', title: 'Séance photo', icon: 'camera' },
-  { time: '17h00', title: 'Cocktail', icon: 'glasses' },
+  { time: '17h00', title: 'Cocktail-Dînatoire', icon: 'glasses' },
   { time: '19h30', title: 'Départ des mariés', icon: 'car' },
 ]
 
