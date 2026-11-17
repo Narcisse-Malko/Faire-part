@@ -33,7 +33,7 @@ export const PROGRAM = [
 // `deadline` : date limite de réponse affichée aux invités, ou null pour ne rien afficher
 export const RSVP = {
   url: 'https://forms.gle/ehemAYH7jTJvGBob7',
-  deadline: 18 janvier 2027,
+  deadline: '18 janvier 2027',
   label: 'Je confirme ma présence',
 }
 
