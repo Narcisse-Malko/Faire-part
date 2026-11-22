@@ -45,8 +45,12 @@ export const RSVP = {
 // contient « et » ou « & », sinon « Cher ».
 // Un lien dont la clé n'est pas dans la liste affiche le faire-part générique.
 export const GUESTS = {
-  'famille-dossou': 'Famille Dossou',
-  // 'jean-et-awa': { name: 'Jean et Awa', salutation: 'Chers' },
+  // Liste de test, à remplacer par les vrais invités
+  'test-famille': 'Famille Test',            // → « Chère Famille Test »
+  'test-couple': 'Jean et Awa Test',         // → « Chers Jean et Awa Test »
+  'test-madame': 'Madame Test',              // → « Chère Madame Test »
+  'test-monsieur': 'Koffi Test',             // → « Cher Koffi Test »
+  'test-amie': { name: 'Aïcha Test', salutation: 'Chère' }, // formule forcée
 }
 
 // Musique d'ambiance (fichier placé dans src/assets/)
