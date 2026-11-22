@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import WaxSeal from './WaxSeal'
 import { TataFrieze, ChevronBand } from './Tata'
 import { COUPLE } from '../config'
+import { GUEST } from '../lib/guest'
 
 /*
  * Étapes de l'animation :
@@ -49,7 +50,9 @@ export default function Envelope({ onOpened }) {
       <div
         className={`mb-14 text-center transition-all duration-700 ${stage >= 2 ? '-translate-y-4 opacity-0' : 'opacity-100'}`}
       >
-        <p className="font-display text-[0.7rem] tracking-[0.35em] text-gold uppercase">Vous avez reçu une invitation</p>
+        <p className="font-display text-[0.7rem] tracking-[0.35em] text-gold uppercase">
+          {GUEST ? `Une invitation pour ${GUEST.name}` : 'Vous avez reçu une invitation'}
+        </p>
         <p className="mt-3 font-script text-4xl text-gold-foil">
           {COUPLE.groom} &amp; {COUPLE.bride}
         </p>
@@ -77,6 +80,11 @@ export default function Envelope({ onOpened }) {
           style={{ transform: stage >= 3 ? 'translateY(-58%)' : 'translateY(0)' }}
         >
           <div className="absolute inset-2 rounded-[2px] border border-gold/40" />
+          {GUEST && (
+            <p className="mb-1.5 px-4 font-serif text-sm italic leading-tight text-ink">
+              {GUEST.salutation} {GUEST.name},
+            </p>
+          )}
           <p className="font-display text-[0.55rem] tracking-[0.3em] text-gold uppercase">Une nouvelle page de notre histoire s'annonce et nous tenons à ce que vous en fassiez partie.</p>
           <p className="mt-1 font-script text-3xl text-gold-dark">
             {COUPLE.initials[0]} &amp; {COUPLE.initials[1]}

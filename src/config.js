@@ -37,5 +37,17 @@ export const RSVP = {
   label: 'Je confirme ma présence',
 }
 
+// Invités : chaque invité reçoit son propre lien, par exemple …/Faire-part/?i=famille-dossou
+// La clé est ce qui suit `?i=` dans le lien (minuscules, sans accents ni espaces).
+// La valeur est le nom affiché, ou un objet { name, salutation } pour choisir
+// la formule d'appel (« Cher », « Chère », « Chers »…).
+// Par défaut : « Chère » pour Famille/Madame/Mme/Mlle, « Chers » si le nom
+// contient « et » ou « & », sinon « Cher ».
+// Un lien dont la clé n'est pas dans la liste affiche le faire-part générique.
+export const GUESTS = {
+  'famille-dossou': 'Famille Dossou',
+  // 'jean-et-awa': { name: 'Jean et Awa', salutation: 'Chers' },
+}
+
 // Musique d'ambiance (fichier placé dans src/assets/)
 export const MUSIC_SRC = musique

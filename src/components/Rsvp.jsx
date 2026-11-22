@@ -1,10 +1,11 @@
 import { RSVP } from '../config'
+import { GUEST } from '../lib/guest'
 
 export default function Rsvp() {
   return (
     <div className="mx-auto max-w-sm text-center">
       <p className="font-serif text-lg leading-snug text-ink text-balance">
-        Votre présence nous ferait très plaisir. Merci de nous dire si vous serez des nôtres.
+        {GUEST ? `${GUEST.name}, votre` : 'Votre'} présence nous ferait très plaisir. Merci de nous dire si vous serez des nôtres.
       </p>
       {RSVP.deadline && (
         <p className="mt-3 font-serif text-lg italic text-ink-soft">Réponse souhaitée avant le {RSVP.deadline}</p>
