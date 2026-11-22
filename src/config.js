@@ -10,9 +10,9 @@ export const COUPLE = {
 
 // Date affichée sous la zone à gratter
 export const DATE_LABEL = {
-  short: '08 · 02 · 2027',
-  long: 'Lundi 8 février 2027',
-  place: "MAIRIE DE SEME-KPODJI",
+  short: '04 · 02 · 2027',
+  long: 'Jeudi 4 février 2027',
+  place: "ARRONDISSEMENT D'AGBLANGANDAN",
 }
 
 // Cible du compte à rebours (heure d'accueil des invités, UTC+1)
