@@ -118,11 +118,6 @@ export default function Envelope({ onOpened }) {
         className={`relative mb-14 text-center transition-all duration-700 ${stage >= 2 ? '-translate-y-4 opacity-0' : 'opacity-100'}`}
       >
         <p className="font-display text-[0.7rem] tracking-[0.35em] text-gold uppercase">Vous avez reçu une invitation</p>
-        {GUEST && (
-          <p className="mt-3 font-serif text-xl italic text-gold">
-            {GUEST.salutation} {GUEST.name}
-          </p>
-        )}
         <p className="mt-3 font-serif text-sm italic text-gold/80">de la part de</p>
         <p className="mt-1 font-script text-4xl text-gold-foil">
           {COUPLE.groom} &amp; {COUPLE.bride}
@@ -209,22 +204,8 @@ export default function Envelope({ onOpened }) {
           <Corner className="absolute bottom-[5%] right-[3.5%] w-[7%]" flip="scale(-1)" />
         </div>
 
-        {/* nom de l'invité, calligraphié sur la poche comme une adresse */}
-        <div className="pointer-events-none absolute inset-x-[14%] bottom-[7%] z-[3] text-center">
-          {GUEST ? (
-            <>
-              <p className="font-display text-gold-dark uppercase" style={{ fontSize: '2.2cqw', letterSpacing: '0.35em' }}>
-                À l'attention de
-              </p>
-              <p className="truncate font-script text-gold-foil" style={{ fontSize: '6.4cqw', lineHeight: 1.15 }}>
-                {GUEST.name}
-              </p>
-            </>
-          ) : (
-            <div className="mx-auto w-1/2 opacity-60">
-              <ChevronBand />
-            </div>
-          )}
+        <div className="pointer-events-none absolute inset-x-[25%] bottom-[7%] z-[3] opacity-60">
+          <ChevronBand />
         </div>
 
         {/* rabat : face papier dehors, doublure dedans */}
@@ -251,6 +232,17 @@ export default function Envelope({ onOpened }) {
               <path d="M44 9 L256 9 L150 90 Z" fill="none" stroke="#b8913a" strokeWidth=".4" strokeOpacity=".45" strokeDasharray="1.5 2.5" />
             </svg>
             <div className="paper-grain absolute inset-0" style={{ clipPath: 'polygon(0 0, 100% 0, 50% 100%)' }} />
+            {/* nom de l'invité calligraphié sur le rabat, au-dessus du sceau */}
+            {GUEST && (
+              <div className="absolute inset-x-[22%] top-[17%] text-center">
+                <p className="font-display text-gold-dark uppercase" style={{ fontSize: '2.2cqw', letterSpacing: '0.35em' }}>
+                  À l'attention de
+                </p>
+                <p className="truncate font-script text-gold-foil" style={{ fontSize: '6.4cqw', lineHeight: 1.2 }}>
+                  {GUEST.name}
+                </p>
+              </div>
+            )}
           </div>
           <div
             className="envelope-liner absolute inset-0"
