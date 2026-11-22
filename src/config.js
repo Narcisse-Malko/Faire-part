@@ -59,5 +59,14 @@ export const GUESTS = {
   'test-amie': { name: 'Aïcha Test', salutation: 'Chère' }, // formule forcée
 }
 
+// Dress code : texte de la section et suggestions sous chaque silhouette
+export const DRESS_CODE = {
+  title: 'Tout de blanc vêtus',
+  text: 'Pour célébrer notre union, nous vous invitons à vous habiller en blanc.',
+  women: 'Robe, ensemble ou pagne blanc',
+  men: 'Costume, boubou ou chemise blanche',
+  shades: ['Blanc', 'Ivoire', 'Crème'],
+}
+
 // Musique d'ambiance (fichier placé dans src/assets/)
 export const MUSIC_SRC = musique

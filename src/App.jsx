@@ -6,10 +6,11 @@ import Timeline from './components/Timeline'
 import Countdown from './components/Countdown'
 import AudioPlayer from './components/AudioPlayer'
 import Rsvp from './components/Rsvp'
+import DressCode from './components/DressCode'
 import WaxSeal from './components/WaxSeal'
 import { TataFrieze, TataDivider, ChevronBand } from './components/Tata'
 import { useReveal } from './lib/useReveal'
-import { COUPLE } from './config'
+import { COUPLE, DRESS_CODE } from './config'
 
 function Section({ kicker, title, subtitle, children, id }) {
   const ref = useReveal()
@@ -67,14 +68,21 @@ export default function App() {
 
         <TataDivider className="mx-auto max-w-xs" />
 
-        {/* 4. Compte à rebours */}
+        {/* 4. Dress code */}
+        <Section kicker="Dress code" title={DRESS_CODE.title}>
+          <DressCode />
+        </Section>
+
+        <TataDivider className="mx-auto max-w-xs" />
+
+        {/* 5. Compte à rebours */}
         <Section kicker="Plus que quelques instants" title="Compte à rebours" subtitle="avant de célébrer ensemble">
           <Countdown />
         </Section>
 
         <TataDivider className="mx-auto max-w-xs" />
 
-        {/* 5. Confirmation de présence */}
+        {/* 6. Confirmation de présence */}
         <Section kicker="Répondez s'il vous plaît" title="Serez-vous là ?">
           <Rsvp />
         </Section>
