@@ -32,6 +32,9 @@ export const PROGRAM = [
 //   ou vers WhatsApp, par exemple https://wa.me/22900000000?text=Je%20serai%20pr%C3%A9sent
 // `deadline` : date limite de réponse affichée aux invités, ou null pour ne rien afficher
 export const RSVP = {
+  // Adresse de l'application Web Google Apps Script (voir apps-script/README.md).
+  // Tant qu'elle est vide, le bouton renvoie vers le formulaire Google ci-dessous.
+  endpoint: '',
   url: 'https://forms.gle/ehemAYH7jTJvGBob7',
   deadline: '18 janvier 2027',
   label: 'Je confirme ma présence',
