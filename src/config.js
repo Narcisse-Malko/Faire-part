@@ -53,7 +53,7 @@ export const GUESTS = {
   'test-couple': 'Jean et Awa Test',         // → « Chers Jean et Awa Test »
   'test-madame': 'Madame Test',              // → « Chère Madame Test »
   'test-monsieur': 'Koffi Test',             // → « Cher Koffi Test »
-  'mademoiselle': 'Sidikatou', salutation: 'Chère',
+  'sidikatou': { name: 'Sidikatou', salutation: 'Chère' },
   'test-amie': { name: 'Aïcha Test', salutation: 'Chère' }, // formule forcée
 }
 
