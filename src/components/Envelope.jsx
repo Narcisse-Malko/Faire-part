@@ -50,10 +50,14 @@ export default function Envelope({ onOpened }) {
       <div
         className={`mb-14 text-center transition-all duration-700 ${stage >= 2 ? '-translate-y-4 opacity-0' : 'opacity-100'}`}
       >
-        <p className="font-display text-[0.7rem] tracking-[0.35em] text-gold uppercase">
-          {GUEST ? `Une invitation pour ${GUEST.name}` : 'Vous avez reçu une invitation'}
-        </p>
-        <p className="mt-3 font-script text-4xl text-gold-foil">
+        <p className="font-display text-[0.7rem] tracking-[0.35em] text-gold uppercase">Vous avez reçu une invitation</p>
+        {GUEST && (
+          <p className="mt-3 font-serif text-xl italic text-gold">
+            {GUEST.salutation} {GUEST.name}
+          </p>
+        )}
+        <p className="mt-3 font-serif text-sm italic text-gold/80">de la part de</p>
+        <p className="mt-1 font-script text-4xl text-gold-foil">
           {COUPLE.groom} &amp; {COUPLE.bride}
         </p>
       </div>
