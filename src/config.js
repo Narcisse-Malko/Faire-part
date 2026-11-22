@@ -16,7 +16,7 @@ export const DATE_LABEL = {
 }
 
 // Cible du compte à rebours (heure d'accueil des invités, UTC+1)
-export const EVENT_DATE = new Date('2027-02-08T14:30:00+01:00')
+export const EVENT_DATE = new Date('2027-02-04T14:30:00+01:00')
 
 // Programme de la journée. `icon` correspond à une clé de components/Icons.jsx
 export const PROGRAM = [
