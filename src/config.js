@@ -34,7 +34,7 @@ export const PROGRAM = [
 export const RSVP = {
   // Adresse de l'application Web Google Apps Script (voir apps-script/README.md).
   // Tant qu'elle est vide, le bouton renvoie vers le formulaire Google ci-dessous.
-  endpoint: '',
+  endpoint: 'https://script.google.com/macros/s/AKfycbyrrb_K1ReCASug1KgH7WN2MyWXkDIvzOTQ0G2gRsduzjlDyrpHzFOApzvVrsFT_upO/exec',
   url: 'https://forms.gle/ehemAYH7jTJvGBob7',
   deadline: '18 janvier 2027',
   label: 'Je confirme ma présence',
