@@ -5,6 +5,8 @@ import musique from './assets/musique.mp3.mpeg?url'
 export const COUPLE = {
   bride: 'Marie-Claire',
   groom: 'Narcisse',
+  brideLastName: 'ADJAGNISSODE',
+  groomLastName: "N'OUEMOU",
   initials: ['N', 'M'],
 }
 
