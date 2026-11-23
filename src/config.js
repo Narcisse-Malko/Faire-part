@@ -40,6 +40,8 @@ export const RSVP = {
   url: 'https://forms.gle/ehemAYH7jTJvGBob7',
   deadline: '18 janvier 2027',
   label: 'Je confirme ma présence',
+  // Mot affiché sous la confirmation de présence (laisser vide pour le masquer)
+  giftNote: 'Ne vous embarrassez pas de cadeaux en nature : un simple geste nous suffira amplement.',
 }
 
 // Invités : chaque invité reçoit son propre lien, par exemple …/Faire-part/?i=famille-dossou
@@ -60,6 +62,7 @@ export const GUESTS = {
   'Couple NOUEMOU': { name: 'Emmanuel NOUEMOU et Félicité CHABI', salutation: 'Chers' },
   'Couple CODO': { name: 'Johnny CODO et Juanita NOUEMOU', salutation: 'Chers' },
   'Madame NOUEMOU': { name: 'CHODATON Iphigénie épouse NOUEMOU', salutation: 'Chère' },
+  'madame-aliane': { name: 'Madame Aliane BEÏDO', salutation: 'Chère' },
   'test-amie': { name: 'Aïcha Test', salutation: 'Chère' }, // formule forcée
 }
 

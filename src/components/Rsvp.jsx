@@ -113,6 +113,21 @@ export default function Rsvp() {
             ? 'Votre présence est bien confirmée. Nous avons hâte de célébrer ce jour avec vous.'
             : 'Nous avons bien noté que vous ne pourrez pas être des nôtres. Vous serez dans nos pensées.'}
         </p>
+        {answer === 'yes' && RSVP.giftNote && (
+          <div className="mx-auto mt-6 max-w-xs">
+            <div className="flex items-center justify-center gap-3 text-gold" aria-hidden="true">
+              <span className="h-px w-10 bg-gradient-to-r from-transparent to-gold" />
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 10 h16 v10 H4 Z" />
+                <path d="M3 7 h18 v3 H3 Z" />
+                <path d="M12 7 v13" />
+                <path d="M12 7 C10 3 6 4 7.5 6.5 C8.5 7.5 12 7 12 7 C12 7 15.5 7.5 16.5 6.5 C18 4 14 3 12 7" />
+              </svg>
+              <span className="h-px w-10 bg-gradient-to-l from-transparent to-gold" />
+            </div>
+            <p className="mt-3 font-serif text-base italic leading-snug text-ink-soft text-balance">{RSVP.giftNote}</p>
+          </div>
+        )}
         <button
           type="button"
           onClick={() => setEditing(true)}
