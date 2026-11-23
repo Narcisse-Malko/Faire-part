@@ -52,7 +52,6 @@ export const RSVP = {
 // contient « et » ou « & », sinon « Cher ».
 // Un lien dont la clé n'est pas dans la liste affiche le faire-part générique.
 export const GUESTS = {
-  'sidikatou': { name: 'Sidikatou', salutation: 'Chère' },
   'Madame Marie-Sabine ADJAGNISSODE': { name: 'Marie-Sabine ADJAGNISSODE', salutation: 'Chère' },
   'Couple NOUEMOU': { name: 'Emmanuel NOUEMOU et Félicité CHABI', salutation: 'Chers' },
   'Couple CODO': { name: 'Johnny CODO et Juanita NOUEMOU', salutation: 'Chers' },
