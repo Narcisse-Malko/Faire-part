@@ -27,6 +27,37 @@ const DUST = Array.from({ length: 16 }, (_, i) => {
   }
 })
 
+// Nom de l'invité sur le rabat : une ligne s'il est court, sinon deux lignes
+// (coupure avant « et » / « épouse », ou au milieu), et taille réduite si besoin.
+function layoutName(name) {
+  let lines = [name]
+  if (name.length > 16) {
+    const m = name.match(/^(.+?)\s+((?:et|&|épouse|ep\.)\s+.+)$/i)
+    if (m) lines = [m[1], m[2]]
+    else {
+      const words = name.split(/\s+/)
+      let best = 1
+      for (let i = 1; i < words.length; i++) {
+        const diff = (w) => Math.abs(words.slice(0, w).join(' ').length - words.slice(w).join(' ').length)
+        if (diff(i) < diff(best)) best = i
+      }
+      if (words.length > 1) lines = [words.slice(0, best).join(' '), words.slice(best).join(' ')]
+    }
+  }
+  // Largeur estimée : les mots en capitales (police Cinzel, demi-taille espacée)
+  // prennent un peu plus de place par lettre que la calligraphie.
+  const width = (l) => l.split(/\s+/).reduce((n, w) => n + 1 + w.length * (isCaps(w) ? 1.25 : 1), -1)
+  const longest = Math.max(...lines.map(width))
+  const size = Math.max(4, Math.min(6.4, (6.4 * 14) / longest))
+  return { lines, size: `${size.toFixed(2)}cqw` }
+}
+
+// Mot entièrement en majuscules (nom de famille), écrit en capitales plutôt qu'en calligraphie
+function isCaps(word) {
+  return /\p{L}{2,}/u.test(word) && word === word.toUpperCase()
+}
+const NAME_LAYOUT = GUEST ? layoutName(GUEST.name) : null
+
 // Dégradé or « satin » pour le ruban et les filets
 const SATIN = 'linear-gradient(180deg, #6f501a 0%, #b8913a 18%, #f6e2a0 45%, #d9b55c 62%, #a87d2b 82%, #6f501a 100%)'
 
@@ -234,12 +265,24 @@ export default function Envelope({ onOpened }) {
             <div className="paper-grain absolute inset-0" style={{ clipPath: 'polygon(0 0, 100% 0, 50% 100%)' }} />
             {/* nom de l'invité calligraphié sur le rabat, au-dessus du sceau */}
             {GUEST && (
-              <div className="absolute inset-x-[22%] top-[17%] text-center">
+              <div className="absolute inset-x-[18%] top-[12%] text-center">
                 <p className="font-display text-gold-dark uppercase" style={{ fontSize: '2.2cqw', letterSpacing: '0.35em' }}>
                   À l'attention de
                 </p>
-                <p className="truncate font-script text-gold-foil" style={{ fontSize: '6.4cqw', lineHeight: 1.2 }}>
-                  {GUEST.name}
+                <p className="font-script text-gold-foil" style={{ fontSize: NAME_LAYOUT.size, lineHeight: 1.15 }}>
+                  {NAME_LAYOUT.lines.map((line, i) => (
+                    <span key={i} className="block whitespace-nowrap">
+                      {line.split(/(\s+)/).map((word, j) =>
+                        isCaps(word) ? (
+                          <span key={j} className="font-display text-gold-dark" style={{ fontSize: '0.5em', letterSpacing: '0.14em' }}>
+                            {word}
+                          </span>
+                        ) : (
+                          word
+                        ),
+                      )}
+                    </span>
+                  ))}
                 </p>
               </div>
             )}
