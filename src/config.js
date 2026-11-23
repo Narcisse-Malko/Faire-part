@@ -56,13 +56,22 @@ export const RSVP = {
 // Un lien dont la clé n'est pas dans la liste affiche le faire-part générique.
 export const GUESTS = {
   'Madame Marie-Sabine ADJAGNISSODE': { name: 'Marie-Sabine ADJAGNISSODE', salutation: 'Chère' },
-  'Couple NOUEMOU': { name: 'Emmanuel NOUEMOU et Félicité CHABI', salutation: 'Chers' },
-  'Couple CODO': { name: 'Johnny CODO et Juanita NOUEMOU', salutation: 'Chers' },
-  'Madame NOUEMOU': { name: 'CHODATON Iphigénie épouse NOUEMOU', salutation: 'Chère' },
-  'madame-aliane': { name: 'Madame Aliane BEÏDO', salutation: 'Chère' },
-  'madame-sidikatou': { name: 'Madame Sidikatou ADJAGNISSODE', salutation: 'Chère' },
-  'madame-lidwine': { name: 'Madame Lidwine QUENUM', salutation: 'Chère' },
+  'madame-marie-ornellie': { name: 'Marie-Ornellie ADJAGNISSODE', salutation: 'Chère' },
+  'couple-nouemou': { name: 'Emmanuel NOUEMOU et Félicité CHABI', salutation: 'Chers' },
+  'couple-montcho': { name: 'Eugène Montcho  et Josiane Montcho', salutation: 'Chers' },
+  'couple-gbovi': { name: 'Marc GBOVI et Leiseil GBOVI', salutation: 'Chers' },
+  'couple-adjagnissode': { name: 'Marcel ADJAGNISSODE et Saadatou LAWANI', salutation: 'Chers' },
+  'couple-toudonou': { name: 'Henoc TOUDONOU et Marie-Marcelle ADJAGNISSODE', salutation: 'Chers' },
+  'couple-hounvio': { name: 'Fréjus HOUNVIO et Aimée HOUNVIO', salutation: 'Chers' },
+  'couple-codo': { name: 'Johnny CODO et Juanita NOUEMOU', salutation: 'Chers' },
+  'madame-nouemou': { name: 'CHODATON Iphigénie épouse NOUEMOU', salutation: 'Chère' },
+  'madame-aliane': { name: 'Aliane BEÏDO', salutation: 'Chère' },
+  'couple-nouveau': { name: 'Narcisse NOUEMOU et Sidikatou ADJAGNISSODE', salutation: 'Chers' },
+  'madame-lidwine': { name: 'Lidwine QUENUM', salutation: 'Chère' },
   'abbe-loic': { name: 'Abbé Loïc Marcel AGLIGAN', salutation: 'Cher' },
+  'abbe-providence': { name: 'Abbé Providence GBEHOUN', salutation: 'Cher' },
+  'abbe-gilles': { name: 'Abbé Gilles HOUENOU', salutation: 'Cher' },
+  'abbe-alexandre': { name: 'Abbé Alexandre HOUNTANGNI', salutation: 'Cher' },
 }
 
 // Dress code : texte de la section et suggestions sous chaque silhouette
