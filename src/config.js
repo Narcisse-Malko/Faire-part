@@ -17,7 +17,7 @@ export const DATE_LABEL = {
   place: "ARRONDISSEMENT D'AGBLANGANDAN",
   // Lien Google Maps du lieu. Pour le lien exact : ouvrir Google Maps, toucher
   // le lieu, « Partager » → « Copier le lien », puis coller ici à la place.
-  mapUrl: "https://www.google.com/maps/search/?api=1&query=Arrondissement%20d'Agblangandan%2C%20S%C3%A8m%C3%A8-Kpodji%2C%20B%C3%A9nin",
+  mapUrl: 'https://maps.app.goo.gl/4sp9aLV9Pqvf6quU7',
 }
 
 // Cible du compte à rebours (heure d'accueil des invités, UTC+1)
