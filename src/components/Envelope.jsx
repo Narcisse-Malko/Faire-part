@@ -3,6 +3,7 @@ import WaxSeal from './WaxSeal'
 import { TataFrieze, ChevronBand } from './Tata'
 import { COUPLE } from '../config'
 import { GUEST } from '../lib/guest'
+import { isCaps, ScriptName } from '../lib/caps'
 
 /*
  * Étapes de l'animation :
@@ -50,11 +51,6 @@ function layoutName(name) {
   const longest = Math.max(...lines.map(width))
   const size = Math.max(4, Math.min(6.4, (6.4 * 14) / longest))
   return { lines, size: `${size.toFixed(2)}cqw` }
-}
-
-// Mot entièrement en majuscules (nom de famille), écrit en capitales plutôt qu'en calligraphie
-function isCaps(word) {
-  return /\p{L}{2,}/u.test(word) && word === word.toUpperCase()
 }
 const NAME_LAYOUT = GUEST ? layoutName(GUEST.name) : null
 
@@ -272,15 +268,7 @@ export default function Envelope({ onOpened }) {
                 <p className="font-script text-gold-foil" style={{ fontSize: NAME_LAYOUT.size, lineHeight: 1.15 }}>
                   {NAME_LAYOUT.lines.map((line, i) => (
                     <span key={i} className="block whitespace-nowrap">
-                      {line.split(/(\s+)/).map((word, j) =>
-                        isCaps(word) ? (
-                          <span key={j} className="font-display text-gold-dark" style={{ fontSize: '0.5em', letterSpacing: '0.14em' }}>
-                            {word}
-                          </span>
-                        ) : (
-                          word
-                        ),
-                      )}
+                      <ScriptName text={line} />
                     </span>
                   ))}
                 </p>

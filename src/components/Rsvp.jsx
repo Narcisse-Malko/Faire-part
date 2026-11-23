@@ -1,13 +1,29 @@
 import { useState } from 'react'
 import { RSVP } from '../config'
 import { GUEST, GUEST_KEY } from '../lib/guest'
+import { slug } from '../lib/slug'
+import { ScriptName } from '../lib/caps'
 
+/*
+ * Confirmation de présence.
+ * Invitation à une personne : un clic sur « Je confirme » ou « Je ne pourrai pas venir ».
+ * Invitation à plusieurs personnes (couple…) : chacune choisit présent ou absent,
+ * puis un seul envoi. Chaque personne a sa propre ligne dans la feuille Google,
+ * sous la clé « <clé du lien>/<nom> », pour compter les présents nominativement.
+ */
+
+const PEOPLE = GUEST ? GUEST.people : null
+const MULTI = PEOPLE && PEOPLE.length > 1
 const STORAGE_KEY = `rsvp:${GUEST_KEY || 'general'}`
 
+// Réponses enregistrées sur cet appareil : { "Nom": "yes" | "no" }
 function readSaved() {
   try {
-    const v = localStorage.getItem(STORAGE_KEY)
-    return v === 'yes' || v === 'no' ? v : null
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    if (raw === 'yes' || raw === 'no') return PEOPLE && !MULTI ? { [PEOPLE[0]]: raw } : null // ancien format
+    const v = JSON.parse(raw)
+    return v && typeof v === 'object' ? v : null
   } catch {
     return null
   }
@@ -15,10 +31,21 @@ function readSaved() {
 
 function save(v) {
   try {
-    localStorage.setItem(STORAGE_KEY, v)
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(v))
   } catch {
     /* navigation privée : on ignore */
   }
+}
+
+async function post(key, name, attending) {
+  const res = await fetch(RSVP.endpoint, {
+    method: 'POST',
+    // text/plain évite la requête préalable CORS que Google Apps Script refuse
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ key, name, attending }),
+  })
+  const data = await res.json()
+  if (!data.ok) throw new Error(data.error)
 }
 
 const MailIcon = () => (
@@ -43,29 +70,69 @@ function GoldButton({ children, ...props }) {
   )
 }
 
+function GiftNote() {
+  if (!RSVP.giftNote) return null
+  return (
+    <div className="mx-auto mt-6 max-w-xs">
+      <div className="flex items-center justify-center gap-3 text-gold" aria-hidden="true">
+        <span className="h-px w-10 bg-gradient-to-r from-transparent to-gold" />
+        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 10 h16 v10 H4 Z" />
+          <path d="M3 7 h18 v3 H3 Z" />
+          <path d="M12 7 v13" />
+          <path d="M12 7 C10 3 6 4 7.5 6.5 C8.5 7.5 12 7 12 7 C12 7 15.5 7.5 16.5 6.5 C18 4 14 3 12 7" />
+        </svg>
+        <span className="h-px w-10 bg-gradient-to-l from-transparent to-gold" />
+      </div>
+      <p className="mt-3 font-serif text-base italic leading-snug text-ink-soft text-balance">{RSVP.giftNote}</p>
+    </div>
+  )
+}
+
+// Ligne « Prénom NOM  [Présent·e] [Absent·e] » pour une invitation à plusieurs
+function PersonChoice({ name, value, onChange, disabled }) {
+  const pill = (active) =>
+    `rounded-full px-3.5 py-1.5 font-display text-[0.6rem] tracking-[0.14em] uppercase transition-colors ring-1 ${
+      active ? 'bg-gradient-to-br from-[#d9b55c] to-[#a87d2b] text-ivory ring-gold-dark/40' : 'bg-ivory/70 text-gold-dark ring-gold/50 hover:bg-gold-pale/60'
+    }`
+  return (
+    <div className="flex flex-col items-center gap-2 border-b border-gold/25 py-4 last:border-b-0">
+      <p className="font-serif text-lg leading-tight text-ink">{name}</p>
+      <div className="flex gap-2" role="radiogroup" aria-label={`Réponse de ${name}`}>
+        <button type="button" role="radio" aria-checked={value === 'yes'} disabled={disabled} onClick={() => onChange('yes')} className={pill(value === 'yes')}>
+          Sera présent·e
+        </button>
+        <button type="button" role="radio" aria-checked={value === 'no'} disabled={disabled} onClick={() => onChange('no')} className={pill(value === 'no')}>
+          Ne pourra pas venir
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function Rsvp() {
-  const [answer, setAnswer] = useState(readSaved)
+  const [answers, setAnswers] = useState(readSaved) // réponses envoyées
+  const [draft, setDraft] = useState(() => readSaved() || {}) // choix en cours (invitation à plusieurs)
   const [status, setStatus] = useState('idle') // idle | sending | error
   const [typedName, setTypedName] = useState('')
   const [editing, setEditing] = useState(false)
 
-  const name = GUEST ? GUEST.name : typedName.trim()
+  const sending = status === 'sending'
 
-  async function send(attending) {
-    if (!name || status === 'sending') return
+  async function submit(result) {
+    if (sending) return
     setStatus('sending')
     try {
-      const res = await fetch(RSVP.endpoint, {
-        method: 'POST',
-        // text/plain évite la requête préalable CORS que Google Apps Script refuse
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ key: GUEST_KEY || '', name, attending }),
-      })
-      const data = await res.json()
-      if (!data.ok) throw new Error(data.error)
-      const v = attending ? 'yes' : 'no'
-      save(v)
-      setAnswer(v)
+      if (!GUEST) {
+        const name = typedName.trim()
+        await post('', name, result[name] === 'yes')
+      } else if (!MULTI) {
+        await post(GUEST_KEY, PEOPLE[0], result[PEOPLE[0]] === 'yes')
+      } else {
+        await Promise.all(PEOPLE.map((p) => post(`${GUEST_KEY}/${slug(p)}`, p, result[p] === 'yes')))
+      }
+      save(result)
+      setAnswers(result)
       setEditing(false)
       setStatus('idle')
     } catch {
@@ -82,6 +149,12 @@ export default function Rsvp() {
         <p className="mt-3 font-serif text-lg italic text-ink-soft">Réponse souhaitée avant le {RSVP.deadline}</p>
       )}
     </>
+  )
+
+  const errorMessage = status === 'error' && (
+    <p className="mt-4 font-serif text-base text-ink" role="alert">
+      La réponse n'a pas pu être envoyée. Vérifiez votre connexion et réessayez.
+    </p>
   )
 
   // Tant que le script Google n'est pas branché, on garde l'ancien lien vers le formulaire.
@@ -104,43 +177,74 @@ export default function Rsvp() {
     )
   }
 
-  if (answer && !editing) {
+  // ——— Réponse déjà envoyée ———
+  if (answers && !editing) {
+    const values = Object.values(answers)
+    const anyYes = values.includes('yes')
+    const allYes = values.every((v) => v === 'yes')
+    const message = !anyYes
+      ? 'Nous avons bien noté que vous ne pourrez pas être des nôtres. Vous serez dans nos pensées.'
+      : allYes
+        ? 'Votre présence est bien confirmée. Nous avons hâte de célébrer ce jour avec vous.'
+        : 'Vos réponses sont bien enregistrées. Nous avons hâte de célébrer ce jour avec vous.'
+
     return (
       <div className="mx-auto max-w-sm text-center">
-        <p className="font-script text-4xl text-gold-dark">Merci{GUEST ? ` ${GUEST.name}` : ''} !</p>
-        <p className="mt-4 font-serif text-lg leading-snug text-ink text-balance">
-          {answer === 'yes'
-            ? 'Votre présence est bien confirmée. Nous avons hâte de célébrer ce jour avec vous.'
-            : 'Nous avons bien noté que vous ne pourrez pas être des nôtres. Vous serez dans nos pensées.'}
+        <p className="font-script text-4xl leading-tight text-gold-dark text-balance">
+          Merci{GUEST && <> <ScriptName text={GUEST.name} /></>} !
         </p>
-        {answer === 'yes' && RSVP.giftNote && (
-          <div className="mx-auto mt-6 max-w-xs">
-            <div className="flex items-center justify-center gap-3 text-gold" aria-hidden="true">
-              <span className="h-px w-10 bg-gradient-to-r from-transparent to-gold" />
-              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 10 h16 v10 H4 Z" />
-                <path d="M3 7 h18 v3 H3 Z" />
-                <path d="M12 7 v13" />
-                <path d="M12 7 C10 3 6 4 7.5 6.5 C8.5 7.5 12 7 12 7 C12 7 15.5 7.5 16.5 6.5 C18 4 14 3 12 7" />
-              </svg>
-              <span className="h-px w-10 bg-gradient-to-l from-transparent to-gold" />
-            </div>
-            <p className="mt-3 font-serif text-base italic leading-snug text-ink-soft text-balance">{RSVP.giftNote}</p>
-          </div>
+        <p className="mt-4 font-serif text-lg leading-snug text-ink text-balance">{message}</p>
+        {MULTI && (
+          <ul className="mx-auto mt-5 max-w-xs space-y-1.5">
+            {PEOPLE.map((p) => (
+              <li key={p} className="flex items-baseline justify-between gap-3 border-b border-gold/20 pb-1.5 font-serif text-base">
+                <span className="text-ink">{p}</span>
+                <span className={`font-display text-[0.6rem] tracking-[0.14em] uppercase ${answers[p] === 'yes' ? 'text-gold-dark' : 'text-ink-soft'}`}>
+                  {answers[p] === 'yes' ? 'Présent·e' : 'Absent·e'}
+                </span>
+              </li>
+            ))}
+          </ul>
         )}
+        {anyYes && <GiftNote />}
         <button
           type="button"
-          onClick={() => setEditing(true)}
+          onClick={() => {
+            setDraft(answers)
+            setEditing(true)
+          }}
           className="mt-6 font-serif text-base italic text-ink-soft underline decoration-gold/50 underline-offset-4 hover:text-ink"
         >
-          Modifier ma réponse
+          Modifier {MULTI ? 'nos réponses' : 'ma réponse'}
         </button>
       </div>
     )
   }
 
-  const sending = status === 'sending'
+  // ——— Invitation à plusieurs : un choix par personne ———
+  if (MULTI) {
+    const complete = PEOPLE.every((p) => draft[p] === 'yes' || draft[p] === 'no')
+    return (
+      <div className="mx-auto max-w-sm text-center">
+        {intro}
+        <p className="mt-5 font-serif text-base italic text-ink-soft">Une réponse pour chacun, s'il vous plaît :</p>
+        <div className="mx-auto mt-2 max-w-xs rounded-[6px] bg-ivory/60 px-4 ring-1 ring-gold/30">
+          {PEOPLE.map((p) => (
+            <PersonChoice key={p} name={p} value={draft[p]} disabled={sending} onChange={(v) => setDraft((d) => ({ ...d, [p]: v }))} />
+          ))}
+        </div>
+        <div className="mt-8">
+          <GoldButton onClick={() => submit(Object.fromEntries(PEOPLE.map((p) => [p, draft[p]])))} disabled={sending || !complete}>
+            {sending ? 'Envoi…' : 'Envoyer nos réponses'}
+          </GoldButton>
+        </div>
+        {errorMessage}
+      </div>
+    )
+  }
 
+  // ——— Invitation à une personne, ou lien général ———
+  const name = GUEST ? PEOPLE[0] : typedName.trim()
   return (
     <div className="mx-auto max-w-sm text-center">
       {intro}
@@ -160,12 +264,12 @@ export default function Rsvp() {
       )}
 
       <div className="mt-8 flex flex-col items-center gap-4">
-        <GoldButton onClick={() => send(true)} disabled={sending || !name}>
+        <GoldButton onClick={() => submit({ [name]: 'yes' })} disabled={sending || !name}>
           {sending ? 'Envoi…' : RSVP.label}
         </GoldButton>
         <button
           type="button"
-          onClick={() => send(false)}
+          onClick={() => submit({ [name]: 'no' })}
           disabled={sending || !name}
           className="font-serif text-base italic text-ink-soft underline decoration-gold/50 underline-offset-4 hover:text-ink disabled:opacity-50"
         >
@@ -173,11 +277,7 @@ export default function Rsvp() {
         </button>
       </div>
 
-      {status === 'error' && (
-        <p className="mt-4 font-serif text-base text-ink" role="alert">
-          La réponse n'a pas pu être envoyée. Vérifiez votre connexion et réessayez.
-        </p>
-      )}
+      {errorMessage}
     </div>
   )
 }

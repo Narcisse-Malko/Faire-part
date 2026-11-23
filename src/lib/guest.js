@@ -7,6 +7,15 @@ function defaultSalutation(name) {
   return 'Cher'
 }
 
+// Personnes qui répondent chacune pour elle-même : la liste `people` si elle est
+// donnée, sinon les noms de part et d'autre de « et » / « & »
+// (« Emmanuel NOUEMOU et Félicité CHABI » → deux personnes), sinon une seule.
+function peopleOf(entry, name) {
+  if (Array.isArray(entry?.people) && entry.people.length) return entry.people.map(String)
+  const parts = name.split(/\s+(?:et|&)\s+/i).map((p) => p.trim()).filter(Boolean)
+  return parts.length > 1 ? parts : [name]
+}
+
 // Les clés de config.js peuvent contenir majuscules, accents ou espaces :
 // on les compare sous leur forme de lien (« Couple NOUEMOU » → « couple-nouemou »).
 const BY_SLUG = new Map(Object.entries(GUESTS).map(([k, entry]) => [slug(k), entry]))
@@ -24,7 +33,7 @@ function readGuest(key) {
   const entry = BY_SLUG.get(key)
   const name = typeof entry === 'string' ? entry : entry?.name
   if (!name) return null
-  return { name, salutation: entry?.salutation || defaultSalutation(name) }
+  return { name, salutation: entry?.salutation || defaultSalutation(name), people: peopleOf(entry, name) }
 }
 
 const key = readKey()

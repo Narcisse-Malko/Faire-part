@@ -19,7 +19,11 @@ https://docs.google.com/spreadsheets/d/1tQ1rClNL1xG7f8rty1my779-DuorSv6_obKhO_Q4
 
 ## Fonctionnement
 
-- Une ligne par invité : date, clé du lien, nom, « Présent » ou « Absent ».
+- Une ligne par personne : date, clé du lien, nom, « Présent » ou « Absent ».
+- Invitation à plusieurs (couple…) : chaque personne répond pour elle-même et a sa
+  propre ligne, avec une clé de la forme `couple-nouemou/emmanuel-nouemou`.
+  Les personnes sont lues dans le nom de l'invitation (de part et d'autre de « et »),
+  ou dans `people: ['…', '…']` si on l'indique dans `GUESTS` (src/config.js).
 - Si un invité nominatif change sa réponse, sa ligne est mise à jour (pas de doublon).
 - Un visiteur arrivé par le lien général tape son nom ; chaque envoi ajoute une ligne.
 - Pour compter les présents : filtrer la colonne **Réponse** sur « Présent »,
