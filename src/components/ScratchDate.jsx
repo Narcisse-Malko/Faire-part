@@ -170,13 +170,19 @@ export default function ScratchDate() {
             <p className="font-display text-[0.65rem] tracking-[0.35em] text-gold uppercase">Le grand jour</p>
             <p className="mt-1 font-display text-[2.1rem] tracking-[0.08em] text-gold-foil">{DATE_LABEL.short}</p>
             <p className="mt-1 font-serif text-xl italic text-ink-soft">{DATE_LABEL.long}</p>
-            <div className="mt-3 flex items-center gap-2 text-gold-dark">
+            <a
+              href={DATE_LABEL.mapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              tabIndex={revealed ? 0 : -1}
+              className="relative mt-3 flex items-center gap-2 px-4 text-gold-dark underline decoration-gold/40 underline-offset-4 hover:text-ink"
+            >
               <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
                 <path d="M12 21 c-4 -5 -7 -8.5 -7 -12 a7 7 0 0 1 14 0 c0 3.5 -3 7 -7 12 Z" />
                 <circle cx="12" cy="9" r="2.4" />
               </svg>
-              <p className="font-display text-[0.72rem] tracking-[0.14em] uppercase">{DATE_LABEL.place}</p>
-            </div>
+              <span className="font-display text-[0.72rem] tracking-[0.14em] uppercase">{DATE_LABEL.place}</span>
+            </a>
           </div>
 
           <canvas
@@ -210,6 +216,26 @@ export default function ScratchDate() {
       <p className={`mt-5 text-center font-serif text-lg italic text-ink-soft transition-opacity duration-700 ${revealed ? 'opacity-100' : 'opacity-0'}`}>
         Notez-la vite dans votre agenda !
       </p>
+      {DATE_LABEL.mapUrl && (
+        <div className={`mt-6 text-center transition-all duration-700 ${revealed ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-2 opacity-0'}`}>
+          <a
+            href={DATE_LABEL.mapUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            tabIndex={revealed ? 0 : -1}
+            className="inline-block rounded-full bg-gradient-to-br from-gold-light via-gold to-gold-dark p-[1.5px] shadow-[0_12px_24px_-12px_rgba(110,80,30,.7)] transition-transform duration-300 hover:-translate-y-0.5 active:scale-[.98]"
+          >
+            <span className="flex items-center gap-3 rounded-full bg-gradient-to-br from-[#d9b55c] to-[#a87d2b] px-6 py-3.5 text-ivory">
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 21 c-4 -5 -7 -8.5 -7 -12 a7 7 0 0 1 14 0 c0 3.5 -3 7 -7 12 Z" />
+                <circle cx="12" cy="9" r="2.4" />
+              </svg>
+              <span className="whitespace-nowrap font-display text-[0.72rem] tracking-[0.14em] uppercase">Voir l'itinéraire</span>
+            </span>
+          </a>
+          <p className="mt-3 font-serif text-base italic text-ink-soft">Ouvre Google Maps pour vous guider jusqu'au lieu</p>
+        </div>
+      )}
     </div>
   )
 }
