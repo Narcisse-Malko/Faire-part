@@ -52,11 +52,6 @@ export const RSVP = {
 // contient « et » ou « & », sinon « Cher ».
 // Un lien dont la clé n'est pas dans la liste affiche le faire-part générique.
 export const GUESTS = {
-  // Liste de test, à remplacer par les vrais invités
-  'test-famille': 'Famille Test',            // → « Chère Famille Test »
-  'test-couple': 'Jean et Awa Test',         // → « Chers Jean et Awa Test »
-  'test-madame': 'Madame Test',              // → « Chère Madame Test »
-  'test-monsieur': 'Koffi Test',             // → « Cher Koffi Test »
   'sidikatou': { name: 'Sidikatou', salutation: 'Chère' },
   'Madame Marie-Sabine ADJAGNISSODE': { name: 'Marie-Sabine ADJAGNISSODE', salutation: 'Chère' },
   'Couple NOUEMOU': { name: 'Emmanuel NOUEMOU et Félicité CHABI', salutation: 'Chers' },
@@ -64,7 +59,6 @@ export const GUESTS = {
   'Madame NOUEMOU': { name: 'CHODATON Iphigénie épouse NOUEMOU', salutation: 'Chère' },
   'madame-aliane': { name: 'Madame Aliane BEÏDO', salutation: 'Chère' },
   'abbe-loic': { name: 'Abbé Loïc Marcel AGLIGAN', salutation: 'Cher' },
-  'test-amie': { name: 'Aïcha Test', salutation: 'Chère' }, // formule forcée
 }
 
 // Dress code : texte de la section et suggestions sous chaque silhouette
