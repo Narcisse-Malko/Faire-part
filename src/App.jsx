@@ -11,6 +11,7 @@ import WaxSeal from './components/WaxSeal'
 import { TataFrieze, TataDivider, ChevronBand } from './components/Tata'
 import { useReveal } from './lib/useReveal'
 import { COUPLE, DRESS_CODE } from './config'
+import couplePhoto from './assets/couple.jpg'
 
 function Section({ kicker, title, subtitle, children, id }) {
   const ref = useReveal()
@@ -36,7 +37,29 @@ export default function App() {
       {!opened && <Envelope onOpened={() => setOpened(true)} />}
       <AudioPlayer />
 
-      <main className="relative mx-auto min-h-screen max-w-2xl overflow-hidden bg-ivory/70 shadow-[0_0_60px_-20px_rgba(110,80,30,.25)] sm:my-8 sm:rounded-sm sm:ring-1 sm:ring-gold/30">
+      {/*
+        Photo des mariés en fond estompé : fixe pendant le défilement, teintée
+        dorée et fondue sur les bords. Pour la rendre plus ou moins visible,
+        changer opacity ci-dessous (0 = invisible, 1 = nette).
+      */}
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
+        <img
+          src={couplePhoto}
+          alt=""
+          className="absolute left-1/2 top-1/2 h-auto max-w-none"
+          style={{
+            // largeur choisie pour que les deux visages tiennent dans l'écran, centrés entre eux
+            width: 'min(145vw, 1100px)',
+            transform: 'translate(-57%, -50%)',
+            opacity: 0.4,
+            filter: 'sepia(.45) saturate(.75) contrast(.9) blur(.5px)',
+            maskImage: 'radial-gradient(closest-side, #000 55%, transparent 100%)',
+            WebkitMaskImage: 'radial-gradient(closest-side, #000 55%, transparent 100%)',
+          }}
+        />
+      </div>
+
+      <main className="relative z-10 mx-auto min-h-screen max-w-2xl overflow-hidden bg-ivory/70 shadow-[0_0_60px_-20px_rgba(110,80,30,.25)] sm:my-8 sm:rounded-sm sm:ring-1 sm:ring-gold/30">
         <div className="opacity-80">
           <ChevronBand />
         </div>
