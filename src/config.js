@@ -41,7 +41,7 @@ export const RSVP = {
   deadline: '18 janvier 2027',
   label: 'Je confirme ma présence',
   // Mot affiché sous la confirmation de présence (laisser vide pour le masquer)
-  giftNote: 'Ne vous embarrassez pas de cadeaux en nature : un simple geste nous suffira amplement.',
+  giftNote: '« Votre présence est notre plus beau cadeau. Si vous souhaitez malgré tout nous faire plaisir, une petite enveloppe nous aidera dans nos projets de jeunes mariés. »',
 }
 
 // Invités : chaque invité reçoit son propre lien, par exemple …/Faire-part/?i=famille-dossou
@@ -63,6 +63,7 @@ export const GUESTS = {
   'Couple CODO': { name: 'Johnny CODO et Juanita NOUEMOU', salutation: 'Chers' },
   'Madame NOUEMOU': { name: 'CHODATON Iphigénie épouse NOUEMOU', salutation: 'Chère' },
   'madame-aliane': { name: 'Madame Aliane BEÏDO', salutation: 'Chère' },
+  'abbe-loic': { name: 'Abbé Loïc Marcel AGLIGAN', salutation: 'Cher' },
   'test-amie': { name: 'Aïcha Test', salutation: 'Chère' }, // formule forcée
 }
 
