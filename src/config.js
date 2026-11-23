@@ -58,6 +58,7 @@ export const GUESTS = {
   'Couple CODO': { name: 'Johnny CODO et Juanita NOUEMOU', salutation: 'Chers' },
   'Madame NOUEMOU': { name: 'CHODATON Iphigénie épouse NOUEMOU', salutation: 'Chère' },
   'madame-aliane': { name: 'Madame Aliane BEÏDO', salutation: 'Chère' },
+  'madame-sidikatou': { name: 'Madame Sidikatou ADJAGNISSODE', salutation: 'Chère' },
   'abbe-loic': { name: 'Abbé Loïc Marcel AGLIGAN', salutation: 'Cher' },
 }
 
