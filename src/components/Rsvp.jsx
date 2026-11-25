@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { RSVP } from '../config'
-import { GUEST, GUEST_KEY, findInvited } from '../lib/guest'
+import { GUEST, GUEST_KEY } from '../lib/guest'
 import { slug } from '../lib/slug'
 import { ScriptName } from '../lib/caps'
 
@@ -11,7 +11,7 @@ import { ScriptName } from '../lib/caps'
  * puis un seul envoi. Chaque personne a sa propre ligne dans la feuille Google,
  * sous la clé « <clé du lien>/<nom> », pour compter les présents nominativement.
  * Elles peuvent aussi inscrire leurs enfants (clé « <clé du lien>/enfant-<prénom> »).
- * Lien général : le nom tapé doit figurer dans la liste des invités (config.js).
+ * (Le lien général passe d'abord par components/NameGate.jsx, qui ouvre l'invitation de la personne.)
  */
 
 const PEOPLE = GUEST ? GUEST.people : null
@@ -198,34 +198,18 @@ export default function Rsvp() {
   const [savedChildren, setSavedChildren] = useState(readSavedChildren) // enfants envoyés
   const [children, setChildren] = useState(readSavedChildren) // enfants en cours de saisie
   const [pendingChild, setPendingChild] = useState('')
-  const [typedName, setTypedName] = useState('')
-  const [notInvited, setNotInvited] = useState(null) // null | 'unknown' | 'ambiguous'
   const [editing, setEditing] = useState(false)
 
   const sending = status === 'sending'
 
   async function submit(result) {
     if (sending) return
-    // Lien général : seules les personnes de la liste des invités peuvent répondre.
-    let invited = null
-    if (!GUEST) {
-      const found = findInvited(typedName)
-      if (!found?.person) {
-        setNotInvited(found?.ambiguous ? 'ambiguous' : 'unknown')
-        return
-      }
-      setNotInvited(null)
-      invited = found.person
-      result = { [invited.name]: Object.values(result)[0] }
-    }
     // Enfants : inscrits seulement si au moins un parent vient ; ceux retirés passent « Absent ».
     const kids = MULTI && Object.values(result).includes('yes') ? addUnique(children, pendingChild.trim()) : []
     const removed = MULTI ? savedChildren.filter((c) => !kids.some((k) => slug(k) === slug(c))) : []
     setStatus('sending')
     try {
-      if (!GUEST) {
-        await post(invited.key, invited.name, result[invited.name] === 'yes')
-      } else if (!MULTI) {
+      if (!MULTI) {
         await post(GUEST_KEY, PEOPLE[0], result[PEOPLE[0]] === 'yes')
       } else {
         await Promise.all([
@@ -361,28 +345,11 @@ export default function Rsvp() {
     )
   }
 
-  // ——— Invitation à une personne, ou lien général ———
-  const name = GUEST ? PEOPLE[0] : typedName.trim()
+  // ——— Invitation à une personne ———
+  const name = PEOPLE[0]
   return (
     <div className="mx-auto max-w-sm text-center">
       {intro}
-
-      {!GUEST && (
-        <label className="mt-6 block">
-          <span className="sr-only">Votre nom</span>
-          <input
-            type="text"
-            value={typedName}
-            onChange={(e) => {
-              setTypedName(e.target.value)
-              setNotInvited(null)
-            }}
-            placeholder="Votre nom et prénom"
-            maxLength={120}
-            className="w-full rounded-full border border-gold/50 bg-ivory/70 px-5 py-3 text-center font-serif text-lg text-ink placeholder:text-ink-soft/60 focus:border-gold focus:outline-none"
-          />
-        </label>
-      )}
 
       <div className="mt-8 flex flex-col items-center gap-4">
         <GoldButton onClick={() => submit({ [name]: 'yes' })} disabled={sending || !name}>
@@ -398,13 +365,6 @@ export default function Rsvp() {
         </button>
       </div>
 
-      {notInvited && (
-        <p className="mt-4 font-serif text-base text-ink text-balance" role="alert">
-          {notInvited === 'ambiguous'
-            ? 'Plusieurs invités portent un nom proche. Merci d’écrire votre prénom et votre nom complets.'
-            : 'Ce nom ne figure pas sur notre liste d’invités. Vérifiez l’orthographe, ou utilisez le lien personnel que vous avez reçu.'}
-        </p>
-      )}
       {errorMessage}
     </div>
   )

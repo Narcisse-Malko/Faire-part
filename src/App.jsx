@@ -11,7 +11,8 @@ import WaxSeal from './components/WaxSeal'
 import { TataFrieze, TataDivider, ChevronBand } from './components/Tata'
 import { useReveal } from './lib/useReveal'
 import { COUPLE, DRESS_CODE } from './config'
-import { ACCESS_OK } from './lib/guest'
+import { ACCESS_OK, GENERAL } from './lib/guest'
+import NameGate from './components/NameGate'
 import couplePhoto from './assets/couple.jpg'
 
 function Section({ kicker, title, subtitle, children, id }) {
@@ -48,6 +49,7 @@ export default function App() {
   const [opened, setOpened] = useState(false)
 
   if (!ACCESS_OK) return <InvalidLink />
+  if (GENERAL) return <NameGate />
 
   return (
     <>
