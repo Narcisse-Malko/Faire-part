@@ -1,5 +1,6 @@
-import { GUESTS } from '../config'
+import { GUESTS, LINKS } from '../config'
 import { slug } from './slug'
+import { guestParam } from './linkcode'
 
 function defaultSalutation(name) {
   if (/(\s(et)\s|&)/i.test(name)) return 'Chers'
@@ -20,12 +21,17 @@ function peopleOf(entry, name) {
 // on les compare sous leur forme de lien (« Couple NOUEMOU » → « couple-nouemou »).
 const BY_SLUG = new Map(Object.entries(GUESTS).map(([k, entry]) => [slug(k), entry]))
 
-// Invité désigné par le paramètre `?i=` du lien, ou null s'il est absent ou inconnu.
+// Valeur de `?i=` attendue pour chaque invité → sa clé
+const BY_PARAM = new Map([...BY_SLUG.keys()].map((k) => [guestParam(k, LINKS.secret), k]))
+
+const rawParam = typeof window === 'undefined' ? '' : slug(new URLSearchParams(window.location.search).get('i') || '')
+
+// Invité désigné par le paramètre `?i=` du lien, ou null s'il est absent, inconnu
+// ou sans le bon code.
 function readKey() {
-  if (typeof window === 'undefined') return null
-  const raw = new URLSearchParams(window.location.search).get('i')
-  const key = raw ? slug(raw) : ''
-  return key && BY_SLUG.has(key) ? key : null
+  if (!rawParam) return null
+  if (BY_PARAM.has(rawParam)) return BY_PARAM.get(rawParam)
+  return LINKS.acceptOldLinks && BY_SLUG.has(rawParam) ? rawParam : null
 }
 
 function readGuest(key) {
@@ -40,6 +46,10 @@ const key = readKey()
 export const GUEST = readGuest(key)
 // Clé du lien (`?i=…`) de l'invité reconnu, ou null.
 export const GUEST_KEY = GUEST ? key : null
+// Lien général (l'invité tape son nom) : `?i=` égal à LINKS.generalCode.
+export const GENERAL = !GUEST && !!LINKS.generalCode && rawParam === slug(LINKS.generalCode)
+// false : lien non valide, le contenu du faire-part n'est pas affiché.
+export const ACCESS_OK = !!GUEST || GENERAL
 
 // Toutes les personnes invitées, avec la clé sous laquelle leur réponse est
 // enregistrée (la même que par leur lien personnel, pour éviter les doublons).

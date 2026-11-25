@@ -47,13 +47,26 @@ export const RSVP = {
   giftNote: '« Votre présence est notre plus beau cadeau. Si vous souhaitez malgré tout nous faire plaisir, une petite enveloppe nous aidera dans nos projets de jeunes mariés. »',
 }
 
-// Invités : chaque invité reçoit son propre lien, par exemple …/Faire-part/?i=famille-dossou
-// La clé est ce qui suit `?i=` dans le lien (minuscules, sans accents ni espaces).
+// Accès au faire-part. Seuls les liens d'invitation valides affichent son contenu ;
+// tout autre lien (sans `?i=`, clé inconnue ou code faux) affiche « lien non valide ».
+export const LINKS = {
+  // Sert à fabriquer le code au hasard de chaque lien (npm run liens pour les afficher).
+  // Le changer change TOUS les liens : ne le modifier que pour tout renvoyer.
+  secret: '0fZH0W6t3k18oar1',
+  // Lien général, où l'invité tape son nom : …/Faire-part/?i=invites-6cd948bf
+  generalCode: 'invites-6cd948bf',
+  // true : les anciens liens sans code (…/?i=monsieur-gasset) marchent encore.
+  // Passer à false une fois que tout le monde a reçu son nouveau lien.
+  acceptOldLinks: true,
+}
+
+// Invités : chaque invité reçoit son propre lien, par exemple …/Faire-part/?i=famille-dossou-k7q2xm
+// La clé est le début de ce qui suit `?i=` (minuscules, sans accents ni espaces),
+// suivie d'un code calculé automatiquement : `npm run liens` affiche les liens complets.
 // La valeur est le nom affiché, ou un objet { name, salutation } pour choisir
 // la formule d'appel (« Cher », « Chère », « Chers »…).
 // Par défaut : « Chère » pour Famille/Madame/Mme/Mlle, « Chers » si le nom
 // contient « et » ou « & », sinon « Cher ».
-// Un lien dont la clé n'est pas dans la liste affiche le faire-part générique.
 export const GUESTS = {
   'Madame Marie-Sabine ADJAGNISSODE': { name: 'Marie-Sabine ADJAGNISSODE', salutation: 'Chère' },
   'madame-marie-ornellie': { name: 'Marie-Ornellie ADJAGNISSODE', salutation: 'Chère' },

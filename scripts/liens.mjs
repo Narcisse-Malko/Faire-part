@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os'
 import { join, dirname } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { slug } from '../src/lib/slug.js'
+import { guestParam } from '../src/lib/linkcode.js'
 
 const SITE = 'https://narcisse-malko.github.io/Faire-part/'
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -17,12 +18,12 @@ const source = readFileSync(join(root, 'src/config.js'), 'utf8')
 const dir = mkdtempSync(join(tmpdir(), 'liens-'))
 const file = join(dir, 'config.mjs')
 writeFileSync(file, source)
-const { GUESTS } = await import(pathToFileURL(file).href)
+const { GUESTS, LINKS } = await import(pathToFileURL(file).href)
 rmSync(dir, { recursive: true, force: true })
 
 const rows = Object.entries(GUESTS).map(([key, entry]) => ({
   name: typeof entry === 'string' ? entry : entry.name,
-  link: `${SITE}?i=${slug(key)}`,
+  link: `${SITE}?i=${guestParam(slug(key), LINKS.secret)}`,
 }))
 
 const seen = new Map()
@@ -33,3 +34,8 @@ for (const { name, link } of rows) {
 
 for (const { name, link } of rows) console.log(`${name}\n  ${link}\n`)
 console.log(`${rows.length} invités`)
+if (LINKS.generalCode) console.log(`
+Lien général (l'invité tape son nom) :
+  ${SITE}?i=${slug(LINKS.generalCode)}`)
+if (LINKS.acceptOldLinks) console.log(`
+Les anciens liens sans code marchent encore (LINKS.acceptOldLinks dans src/config.js).`)

@@ -11,6 +11,7 @@ import WaxSeal from './components/WaxSeal'
 import { TataFrieze, TataDivider, ChevronBand } from './components/Tata'
 import { useReveal } from './lib/useReveal'
 import { COUPLE, DRESS_CODE } from './config'
+import { ACCESS_OK } from './lib/guest'
 import couplePhoto from './assets/couple.jpg'
 
 function Section({ kicker, title, subtitle, children, id }) {
@@ -29,8 +30,24 @@ function Section({ kicker, title, subtitle, children, id }) {
   )
 }
 
+// Lien sans invitation valide : rien du faire-part (date, lieu, programme) n'est montré.
+function InvalidLink() {
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center bg-ivory px-8 text-center">
+      <WaxSeal className="w-20 drop-shadow-[0_4px_6px_rgba(90,60,15,.35)]" />
+      <h1 className="mt-6 font-script text-4xl leading-tight text-gold-foil">Lien non valide</h1>
+      <p className="mt-4 max-w-xs font-serif text-lg leading-snug text-ink text-balance">
+        Ce lien d’invitation n’est pas reconnu. Merci d’utiliser le lien personnel que vous avez reçu.
+      </p>
+      <TataDivider className="mt-8 w-full max-w-xs" />
+    </main>
+  )
+}
+
 export default function App() {
   const [opened, setOpened] = useState(false)
+
+  if (!ACCESS_OK) return <InvalidLink />
 
   return (
     <>
