@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { RSVP } from '../config'
-import { GUEST, GUEST_KEY } from '../lib/guest'
+import { GUEST, GUEST_KEY, findInvited } from '../lib/guest'
 import { slug } from '../lib/slug'
 import { ScriptName } from '../lib/caps'
 
@@ -10,11 +10,15 @@ import { ScriptName } from '../lib/caps'
  * Invitation à plusieurs personnes (couple…) : chacune choisit présent ou absent,
  * puis un seul envoi. Chaque personne a sa propre ligne dans la feuille Google,
  * sous la clé « <clé du lien>/<nom> », pour compter les présents nominativement.
+ * Elles peuvent aussi inscrire leurs enfants (clé « <clé du lien>/enfant-<prénom> »).
+ * Lien général : le nom tapé doit figurer dans la liste des invités (config.js).
  */
 
 const PEOPLE = GUEST ? GUEST.people : null
 const MULTI = PEOPLE && PEOPLE.length > 1
 const STORAGE_KEY = `rsvp:${GUEST_KEY || 'general'}`
+const CHILDREN_KEY = `${STORAGE_KEY}:enfants`
+const MAX_CHILDREN = 8
 
 // Réponses enregistrées sur cet appareil : { "Nom": "yes" | "no" }
 function readSaved() {
@@ -29,13 +33,27 @@ function readSaved() {
   }
 }
 
-function save(v) {
+function readSavedChildren() {
+  try {
+    const v = JSON.parse(localStorage.getItem(CHILDREN_KEY) || '[]')
+    return Array.isArray(v) ? v.map(String) : []
+  } catch {
+    return []
+  }
+}
+
+function save(v, children) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(v))
+    localStorage.setItem(CHILDREN_KEY, JSON.stringify(children))
   } catch {
     /* navigation privée : on ignore */
   }
 }
+
+const childKey = (child) => `${GUEST_KEY}/enfant-${slug(child)}`
+// Évite les doublons « Léa » / « lea »
+const addUnique = (list, child) => (child && !list.some((c) => slug(c) === slug(child)) ? [...list, child] : list)
 
 async function post(key, name, attending) {
   const res = await fetch(RSVP.endpoint, {
@@ -110,29 +128,117 @@ function PersonChoice({ name, value, onChange, disabled }) {
   )
 }
 
+// Enfants accompagnant le couple : liste + champ « Ajouter »
+function ChildrenEditor({ list, setList, pending, setPending, disabled }) {
+  const add = () => {
+    const child = pending.trim()
+    if (!child) return
+    setList((l) => addUnique(l, child))
+    setPending('')
+  }
+  return (
+    <div className="mx-auto mt-6 max-w-xs text-center">
+      <p className="font-serif text-base italic text-ink-soft">Viendrez-vous avec vos enfants ? Inscrivez-les ici :</p>
+      {list.length > 0 && (
+        <ul className="mt-3 space-y-1.5">
+          {list.map((c) => (
+            <li key={c} className="flex items-center justify-between gap-3 border-b border-gold/20 pb-1.5 font-serif text-base text-ink">
+              <span>{c}</span>
+              <button
+                type="button"
+                disabled={disabled}
+                onClick={() => setList((l) => l.filter((x) => x !== c))}
+                aria-label={`Retirer ${c}`}
+                className="px-1 text-lg leading-none text-ink-soft hover:text-ink"
+              >
+                ×
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      {list.length < MAX_CHILDREN && (
+        <div className="mt-3 flex gap-2">
+          <label className="flex-1">
+            <span className="sr-only">Prénom et nom de l’enfant</span>
+            <input
+              type="text"
+              value={pending}
+              disabled={disabled}
+              onChange={(e) => setPending(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  add()
+                }
+              }}
+              placeholder="Prénom et nom de l’enfant"
+              maxLength={80}
+              className="w-full rounded-full border border-gold/50 bg-ivory/70 px-4 py-2 text-center font-serif text-base text-ink placeholder:text-ink-soft/60 focus:border-gold focus:outline-none"
+            />
+          </label>
+          <button
+            type="button"
+            onClick={add}
+            disabled={disabled || !pending.trim()}
+            className="rounded-full bg-ivory/70 px-4 py-2 font-display text-[0.6rem] tracking-[0.14em] uppercase text-gold-dark ring-1 ring-gold/50 hover:bg-gold-pale/60 disabled:opacity-50"
+          >
+            Ajouter
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function Rsvp() {
   const [answers, setAnswers] = useState(readSaved) // réponses envoyées
   const [draft, setDraft] = useState(() => readSaved() || {}) // choix en cours (invitation à plusieurs)
   const [status, setStatus] = useState('idle') // idle | sending | error
+  const [savedChildren, setSavedChildren] = useState(readSavedChildren) // enfants envoyés
+  const [children, setChildren] = useState(readSavedChildren) // enfants en cours de saisie
+  const [pendingChild, setPendingChild] = useState('')
   const [typedName, setTypedName] = useState('')
+  const [notInvited, setNotInvited] = useState(null) // null | 'unknown' | 'ambiguous'
   const [editing, setEditing] = useState(false)
 
   const sending = status === 'sending'
 
   async function submit(result) {
     if (sending) return
+    // Lien général : seules les personnes de la liste des invités peuvent répondre.
+    let invited = null
+    if (!GUEST) {
+      const found = findInvited(typedName)
+      if (!found?.person) {
+        setNotInvited(found?.ambiguous ? 'ambiguous' : 'unknown')
+        return
+      }
+      setNotInvited(null)
+      invited = found.person
+      result = { [invited.name]: Object.values(result)[0] }
+    }
+    // Enfants : inscrits seulement si au moins un parent vient ; ceux retirés passent « Absent ».
+    const kids = MULTI && Object.values(result).includes('yes') ? addUnique(children, pendingChild.trim()) : []
+    const removed = MULTI ? savedChildren.filter((c) => !kids.some((k) => slug(k) === slug(c))) : []
     setStatus('sending')
     try {
       if (!GUEST) {
-        const name = typedName.trim()
-        await post('', name, result[name] === 'yes')
+        await post(invited.key, invited.name, result[invited.name] === 'yes')
       } else if (!MULTI) {
         await post(GUEST_KEY, PEOPLE[0], result[PEOPLE[0]] === 'yes')
       } else {
-        await Promise.all(PEOPLE.map((p) => post(`${GUEST_KEY}/${slug(p)}`, p, result[p] === 'yes')))
+        await Promise.all([
+          ...PEOPLE.map((p) => post(`${GUEST_KEY}/${slug(p)}`, p, result[p] === 'yes')),
+          ...kids.map((c) => post(childKey(c), `${c} (enfant)`, true)),
+          ...removed.map((c) => post(childKey(c), `${c} (enfant)`, false)),
+        ])
       }
-      save(result)
+      save(result, kids)
       setAnswers(result)
+      setSavedChildren(kids)
+      setChildren(kids)
+      setPendingChild('')
       setEditing(false)
       setStatus('idle')
     } catch {
@@ -204,6 +310,14 @@ export default function Rsvp() {
                 </span>
               </li>
             ))}
+            {savedChildren.map((c) => (
+              <li key={`enfant-${c}`} className="flex items-baseline justify-between gap-3 border-b border-gold/20 pb-1.5 font-serif text-base">
+                <span className="text-ink">
+                  {c} <span className="italic text-ink-soft">(enfant)</span>
+                </span>
+                <span className="font-display text-[0.6rem] tracking-[0.14em] uppercase text-gold-dark">Présent·e</span>
+              </li>
+            ))}
           </ul>
         )}
         {anyYes && <GiftNote />}
@@ -211,6 +325,7 @@ export default function Rsvp() {
           type="button"
           onClick={() => {
             setDraft(answers)
+            setChildren(savedChildren)
             setEditing(true)
           }}
           className="mt-6 font-serif text-base italic text-ink-soft underline decoration-gold/50 underline-offset-4 hover:text-ink"
@@ -233,6 +348,9 @@ export default function Rsvp() {
             <PersonChoice key={p} name={p} value={draft[p]} disabled={sending} onChange={(v) => setDraft((d) => ({ ...d, [p]: v }))} />
           ))}
         </div>
+        {PEOPLE.some((p) => draft[p] === 'yes') && (
+          <ChildrenEditor list={children} setList={setChildren} pending={pendingChild} setPending={setPendingChild} disabled={sending} />
+        )}
         <div className="mt-8">
           <GoldButton onClick={() => submit(Object.fromEntries(PEOPLE.map((p) => [p, draft[p]])))} disabled={sending || !complete}>
             {sending ? 'Envoi…' : 'Envoyer nos réponses'}
@@ -255,7 +373,10 @@ export default function Rsvp() {
           <input
             type="text"
             value={typedName}
-            onChange={(e) => setTypedName(e.target.value)}
+            onChange={(e) => {
+              setTypedName(e.target.value)
+              setNotInvited(null)
+            }}
             placeholder="Votre nom et prénom"
             maxLength={120}
             className="w-full rounded-full border border-gold/50 bg-ivory/70 px-5 py-3 text-center font-serif text-lg text-ink placeholder:text-ink-soft/60 focus:border-gold focus:outline-none"
@@ -277,6 +398,13 @@ export default function Rsvp() {
         </button>
       </div>
 
+      {notInvited && (
+        <p className="mt-4 font-serif text-base text-ink text-balance" role="alert">
+          {notInvited === 'ambiguous'
+            ? 'Plusieurs invités portent un nom proche. Merci d’écrire votre prénom et votre nom complets.'
+            : 'Ce nom ne figure pas sur notre liste d’invités. Vérifiez l’orthographe, ou utilisez le lien personnel que vous avez reçu.'}
+        </p>
+      )}
       {errorMessage}
     </div>
   )

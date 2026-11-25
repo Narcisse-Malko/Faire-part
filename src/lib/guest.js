@@ -40,3 +40,29 @@ const key = readKey()
 export const GUEST = readGuest(key)
 // Clé du lien (`?i=…`) de l'invité reconnu, ou null.
 export const GUEST_KEY = GUEST ? key : null
+
+// Toutes les personnes invitées, avec la clé sous laquelle leur réponse est
+// enregistrée (la même que par leur lien personnel, pour éviter les doublons).
+const ALL_PEOPLE = [...BY_SLUG.entries()].flatMap(([k, entry]) => {
+  const name = typeof entry === 'string' ? entry : entry?.name
+  if (!name) return []
+  const people = peopleOf(entry, name)
+  return people.map((p) => ({ name: p, key: people.length > 1 ? `${k}/${slug(p)}` : k }))
+})
+
+const words = (s) => slug(s).split('-').filter(Boolean)
+
+// Retrouve la personne invitée correspondant au nom tapé sur le lien général.
+// L'ordre des mots, les accents et les majuscules sont ignorés ; il faut au moins
+// deux mots (prénom et nom) et un seul invité possible.
+// Renvoie { person } , { ambiguous: true } ou null si le nom n'est pas sur la liste.
+export function findInvited(typed) {
+  const t = words(typed)
+  if (t.length < 2) return null
+  const matches = ALL_PEOPLE.filter((p) => {
+    const w = words(p.name)
+    return t.every((x) => w.includes(x))
+  })
+  if (matches.length === 1) return { person: matches[0] }
+  return matches.length > 1 ? { ambiguous: true } : null
+}

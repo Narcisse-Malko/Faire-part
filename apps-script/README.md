@@ -24,8 +24,12 @@ https://docs.google.com/spreadsheets/d/1tQ1rClNL1xG7f8rty1my779-DuorSv6_obKhO_Q4
   propre ligne, avec une clé de la forme `couple-nouemou/emmanuel-nouemou`.
   Les personnes sont lues dans le nom de l'invitation (de part et d'autre de « et »),
   ou dans `people: ['…', '…']` si on l'indique dans `GUESTS` (src/config.js).
+- Un couple peut inscrire ses enfants : une ligne par enfant, nom suivi de « (enfant) »,
+  clé de la forme `couple-nouemou/enfant-lea-nouemou`. Un enfant retiré ensuite passe « Absent ».
 - Si un invité nominatif change sa réponse, sa ligne est mise à jour (pas de doublon).
-- Un visiteur arrivé par le lien général tape son nom ; chaque envoi ajoute une ligne.
+- Un visiteur arrivé par le lien général tape son nom : il ne peut répondre que si ce nom
+  figure dans `GUESTS` (ordre des mots, accents et majuscules ignorés). Sa réponse est
+  enregistrée sous la même clé que s'il avait utilisé son lien personnel.
 - Pour compter les présents : filtrer la colonne **Réponse** sur « Présent »,
   ou écrire `=NB.SI(D:D;"Présent")` dans une cellule libre.
 
