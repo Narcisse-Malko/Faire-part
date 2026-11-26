@@ -47,22 +47,16 @@ export const RSVP = {
   giftNote: '« Votre présence est notre plus beau cadeau. Si vous souhaitez malgré tout nous faire plaisir, une petite enveloppe nous aidera dans nos projets de jeunes mariés. »',
 }
 
-// Accès au faire-part. Seuls les liens d'invitation valides affichent son contenu ;
-// tout autre lien (sans `?i=`, clé inconnue ou code faux) affiche « lien non valide ».
+// Accès au faire-part : un seul lien, le lien général, à envoyer à tous les invités :
+//   https://narcisse-malko.github.io/Faire-part/?i=invites-6cd948bf
+// L'invité tape son nom ; s'il figure dans GUESTS ci-dessous, son invitation s'ouvre.
+// Tout autre lien affiche « lien non valide ». Changer `generalCode` change le lien.
 export const LINKS = {
-  // Sert à fabriquer le code au hasard de chaque lien (npm run liens pour les afficher).
-  // Le changer change TOUS les liens : ne le modifier que pour tout renvoyer.
-  secret: '0fZH0W6t3k18oar1',
-  // Lien général, où l'invité tape son nom : …/Faire-part/?i=invites-6cd948bf
   generalCode: 'invites-6cd948bf',
-  // true : les anciens liens sans code (…/?i=monsieur-gasset) marchent encore.
-  // Passer à false une fois que tout le monde a reçu son nouveau lien.
-  acceptOldLinks: true,
 }
 
-// Invités : chaque invité reçoit son propre lien, par exemple …/Faire-part/?i=famille-dossou-k7q2xm
-// La clé est le début de ce qui suit `?i=` (minuscules, sans accents ni espaces),
-// suivie d'un code calculé automatiquement : `npm run liens` affiche les liens complets.
+// Invités : la clé identifie l'invitation (et sa ligne dans la feuille Google) ;
+// ne pas la changer une fois que l'invité a répondu.
 // La valeur est le nom affiché, ou un objet { name, salutation } pour choisir
 // la formule d'appel (« Cher », « Chère », « Chers »…).
 // Par défaut : « Chère » pour Famille/Madame/Mme/Mlle, « Chers » si le nom

@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { findInvited } from '../lib/guest'
+import { findInvited, openInvitation } from '../lib/guest'
 import WaxSeal from './WaxSeal'
 import { TataDivider } from './Tata'
 
 /*
  * Lien général : l'invité tape son nom avant de voir quoi que ce soit.
- * Nom sur la liste → on ouvre son invitation personnelle (enveloppe à son nom).
+ * Nom sur la liste → on ouvre son invitation (enveloppe à son nom), sur le même lien.
  * Sinon → il reste sur cet écran, qui ne montre aucune information du faire-part.
  */
 export default function NameGate() {
@@ -19,7 +19,7 @@ export default function NameGate() {
       setError(found?.ambiguous ? 'ambiguous' : 'unknown')
       return
     }
-    window.location.replace(`${window.location.pathname}?i=${found.person.link}`)
+    openInvitation(found.person.invitation)
   }
 
   return (
@@ -61,7 +61,7 @@ export default function NameGate() {
         <p className="mt-5 max-w-xs font-serif text-base text-ink text-balance" role="alert">
           {error === 'ambiguous'
             ? 'Plusieurs invités portent un nom proche. Merci d’écrire votre prénom et votre nom complets.'
-            : 'Ce nom ne figure pas sur notre liste d’invités. Vérifiez l’orthographe, ou utilisez le lien personnel que vous avez reçu.'}
+            : 'Ce nom ne figure pas sur notre liste d’invités. Vérifiez l’orthographe de votre prénom et de votre nom.'}
         </p>
       )}
 

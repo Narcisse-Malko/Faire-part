@@ -1,6 +1,5 @@
 import { GUESTS, LINKS } from '../config'
 import { slug } from './slug'
-import { guestParam } from './linkcode'
 
 function defaultSalutation(name) {
   if (/(\s(et)\s|&)/i.test(name)) return 'Chers'
@@ -21,17 +20,32 @@ function peopleOf(entry, name) {
 // on les compare sous leur forme de lien (« Couple NOUEMOU » → « couple-nouemou »).
 const BY_SLUG = new Map(Object.entries(GUESTS).map(([k, entry]) => [slug(k), entry]))
 
-// Valeur de `?i=` attendue pour chaque invité → sa clé
-const BY_PARAM = new Map([...BY_SLUG.keys()].map((k) => [guestParam(k, LINKS.secret), k]))
-
+// Seul le lien général (`?i=` égal à LINKS.generalCode) ouvre le faire-part.
+// Il n'y a plus de lien personnel : l'invité tape son nom (NameGate), puis
+// son invitation est retenue le temps de la visite (sessionStorage).
 const rawParam = typeof window === 'undefined' ? '' : slug(new URLSearchParams(window.location.search).get('i') || '')
+export const GENERAL = !!LINKS.generalCode && rawParam === slug(LINKS.generalCode)
 
-// Invité désigné par le paramètre `?i=` du lien, ou null s'il est absent, inconnu
-// ou sans le bon code.
+const SESSION_KEY = 'invitation'
+
 function readKey() {
-  if (!rawParam) return null
-  if (BY_PARAM.has(rawParam)) return BY_PARAM.get(rawParam)
-  return LINKS.acceptOldLinks && BY_SLUG.has(rawParam) ? rawParam : null
+  if (!GENERAL) return null
+  try {
+    const k = sessionStorage.getItem(SESSION_KEY)
+    return k && BY_SLUG.has(k) ? k : null
+  } catch {
+    return null
+  }
+}
+
+// Ouvre l'invitation trouvée par NameGate (recharge la page sur le même lien).
+export function openInvitation(key) {
+  try {
+    sessionStorage.setItem(SESSION_KEY, key)
+  } catch {
+    /* stockage bloqué : rien à faire */
+  }
+  window.location.reload()
 }
 
 function readGuest(key) {
@@ -44,19 +58,19 @@ function readGuest(key) {
 
 const key = readKey()
 export const GUEST = readGuest(key)
-// Clé du lien (`?i=…`) de l'invité reconnu, ou null.
+// Clé de l'invitation reconnue (sert aussi de clé dans la feuille Google), ou null.
 export const GUEST_KEY = GUEST ? key : null
-// Lien général (l'invité tape son nom) : `?i=` égal à LINKS.generalCode.
-export const GENERAL = !GUEST && !!LINKS.generalCode && rawParam === slug(LINKS.generalCode)
-// false : lien non valide, le contenu du faire-part n'est pas affiché.
-export const ACCESS_OK = !!GUEST || GENERAL
+// false : lien non valide, rien du faire-part n'est affiché.
+export const ACCESS_OK = GENERAL
+// true : lien général, mais nom pas encore saisi → écran NameGate.
+export const NEEDS_NAME = GENERAL && !GUEST
 
-// Toutes les personnes invitées, avec la valeur `?i=` de leur invitation.
+// Toutes les personnes invitées, avec la clé de leur invitation.
 const ALL_PEOPLE = [...BY_SLUG.entries()].flatMap(([k, entry]) => {
   const name = typeof entry === 'string' ? entry : entry?.name
   if (!name) return []
   const people = peopleOf(entry, name)
-  return people.map((p) => ({ name: p, link: guestParam(k, LINKS.secret) }))
+  return people.map((p) => ({ name: p, invitation: k }))
 })
 
 const words = (s) => slug(s).split('-').filter(Boolean)
@@ -73,6 +87,6 @@ export function findInvited(typed) {
     return t.every((x) => w.includes(x))
   })
   // Plusieurs noms trouvés mais tous dans la même invitation (un couple) : on ouvre celle-là.
-  if (matches.length && matches.every((m) => m.link === matches[0].link)) return { person: matches[0] }
+  if (matches.length && matches.every((m) => m.invitation === matches[0].invitation)) return { person: matches[0] }
   return matches.length > 1 ? { ambiguous: true } : null
 }
