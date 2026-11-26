@@ -76,7 +76,7 @@ export const GUESTS = {
   'madame-lepajollec': { name: 'Elisabeth LEPAJOLLEC', salutation: 'Chère' },
   'monsieur-gasset': {name: 'Valentin GASSET', salutation: 'Cher'},
   'couple-nouveau': { name: 'Narcisse NOUEMOU et Sidikatou ADJAGNISSODE', salutation: 'Chers' },
-  'madame-lidwine': { name: 'Lidwine QUENUM', salutation: 'Chère' },
+  'madame-armelle': { name: 'Armelle KINHA', salutation: 'Chère' },
   'monsieur-diouf': {name: 'Léopold Khekhane DIOUF', salutation: 'Cher'},
   'abbe-loic': { name: 'Abbé Loïc Marcel AGLIGAN', salutation: 'Cher' },
   'abbe-providence': { name: 'Abbé Providence GBEHOUN', salutation: 'Cher' },
